@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Modern Portal Color Palette */
+  --primary: #2563eb; 
+  --primary-hover: #1d4ed8;
+  --bg-color: #f8fafc; /* Soft slate background */
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --focus-ring: rgba(37, 99, 235, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Base Overrides */
+body, .bg-gray-100 {
+  background-color: var(--bg-color) !important;
+  color: var(--text-main);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Card & Container Styling */
+main .bg-white {
+  background-color: var(--card-bg) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid var(--border-color);
+  padding: 2rem !important;
+}
+
+h1, h2, h3 {
+  color: var(--text-main) !important;
+  letter-spacing: -0.025em;
+}
+
+/* Forms & Inputs */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem !important;
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--focus-ring) !important;
+}
+
+.form-input:read-only {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  background-color: var(--primary) !important;
+  color: white !important;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn:hover {
+  background-color: var(--primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.btn-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* Dashboard Action Cards (Index.html overrides) */
+a[class*="bg-blue-500"], 
+a[class*="bg-green-500"], 
+a[class*="bg-purple-500"], 
+a[class*="bg-yellow-500"] {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color);
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+  transition: all 0.2s ease !important;
+  font-weight: 600;
+}
+
+a[class*="bg-blue-500"]:hover, 
+a[class*="bg-green-500"]:hover, 
+a[class*="bg-purple-500"]:hover, 
+a[class*="bg-yellow-500"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.08) !important;
+  border-color: var(--primary);
+  color: var(--primary) !important;
+}
+
+a[class*="bg-blue-500"] svg { color: #3b82f6; }
+a[class*="bg-green-500"] svg { color: #10b981; }
+a[class*="bg-purple-500"] svg { color: #8b5cf6; }
+a[class*="bg-yellow-500"] svg { color: #f59e0b; }
+
+/* Alerts */
+.alert {
+  padding: 1rem 1.25rem !important;
+  margin-bottom: 1.25rem;
+  border-radius: 8px !important;
+  border-left: 4px solid transparent;
+}
+
+.alert-success {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-left-color: #10b981;
+  border: 1px solid #d1fae5;
+}
+
+.alert-error {
+  background-color: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-left-color: #ef4444;
+  border: 1px solid #fee2e2;
+}
+
+#visit-id {
+  font-family: monospace;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  background: #d1fae5;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.table th {
+  background-color: #f8fafc !important;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 1rem !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* QR Code Display */
+.qr-code {
+  width: 220px;
+  height: 220px;
+  margin: 1rem auto;
+  background: white;
+  padding: 1rem;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Navigation Bar Overrides */
+navbar-component nav {
+  background-color: #ffffff !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: none !important;
+  padding: 1rem 0 !important;
+}
+
+navbar-component .nav-container {
+  padding: 0 1rem;
+}
+
+navbar-component .nav-title {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em;
+}
+
+navbar-component .nav-link {
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease;
+}
+
+navbar-component .nav-link:hover {
+  background-color: #f1f5f9 !important;
+  color: var(--primary) !important;
+}
+
+/* Select Element Specific Styling */
+/* register.html */
+body:has(#register-form) .form-input:is(select) {
+  background-color: #f8fafc;
+  color: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+body:has(#register-form) .form-input:is(select):focus {
+  background-color: #ffffff;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--focus-ring) !important;
+}
+
+/* directory.html */
+body:has(#filter-form) .form-input:is(select) {
+  background-color: #f8fafc;
+  color: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+body:has(#filter-form) .form-input:is(select):focus {
+  background-color: #ffffff;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--focus-ring) !important;
+}
+
+/* visit.html */
+body:has(#visit-form) .form-input:is(select) {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: var(--border-color);
+}
+
+/* Override the general read-only styles for select elements in register and directory */
+body:has(#register-form) .form-input:is(select):read-only,
+body:has(#filter-form) .form-input:is(select):read-only {
+  background-color: #f8fafc;
+  color: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* reports.html */
+body:has(#report-filter) .form-input:is(select) {
+  background-color: #f8fafc;
+  color: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+body:has(#report-filter) .form-input:is(select):focus {
+  background-color: #ffffff;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--focus-ring) !important;
+}

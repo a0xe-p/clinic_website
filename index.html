@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="sanfelipe.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/footer.js"></script>
+</head>
+<body class="bg-gray-100">
+  <navbar-component></navbar-component>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">San Felipe Neri Catholic School</h1>
+      <p class="text-gray-600 mb-6">A simple system to track student clinic visits using QR codes</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="register.html" class="bg-blue-500 hover:bg-blue-600 text-white py-4 px-6 rounded-lg shadow flex items-center justify-center transition duration-300">
+          <i data-feather="user-plus" class="mr-2"></i>
+          Register New Student
+        </a>
+        
+        <a href="visit.html" class="bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-lg shadow flex items-center justify-center transition duration-300">
+          <i data-feather="clipboard" class="mr-2"></i>
+          Log Clinic Visit
+        </a>
+        
+        <a href="directory.html" class="bg-purple-500 hover:bg-purple-600 text-white py-4 px-6 rounded-lg shadow flex items-center justify-center transition duration-300">
+          <i data-feather="users" class="mr-2"></i>
+          Student Directory
+        </a>
+        
+        <a href="reports.html" class="bg-yellow-500 hover:bg-yellow-600 text-white py-4 px-6 rounded-lg shadow flex items-center justify-center transition duration-300">
+          <i data-feather="file-text" class="mr-2"></i>
+          Generate Reports
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    feather.replace();
+    // Simple database simulation using localStorage
+    if (!localStorage.getItem('students')) {
+      localStorage.setItem('students', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('visits')) {
+      localStorage.setItem('visits', JSON.stringify([]));
+    }
+  </script>
+</body>
+</html>

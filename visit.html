@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Visit</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="sanfelipe.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/footer.js"></script>
+  <script src="script.js"></script>
+</head>
+<body class="bg-gray-100">
+  <navbar-component></navbar-component>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Log Clinic Visit</h1>
+      
+      <p class="text-gray-600 mb-6">
+        Scan the student's QR code or manually enter their information below.
+      </p>
+      
+      <div class="mb-6 text-center">
+        <a href="scan.html" class="btn inline-flex items-center">
+          <i data-feather="maximize" class="mr-2"></i> Scan QR Code
+        </a>
+      </div>
+      
+      <form id="visit-form" autocomplete="off" class="space-y-4">
+        <input type="hidden" id="student-id-field">
+        
+        <div class="form-group">
+          <label for="full-name" class="form-label">Full Name</label>
+          <input type="text" id="full-name" class="form-input" readonly>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label for="age" class="form-label">Age</label>
+            <input type="text" id="age" class="form-input" readonly>
+          </div>
+          <div class="form-group">
+            <label for="grade-section" class="form-label">Grade & Section</label>
+            <input type="text" id="grade-section" class="form-input" readonly>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="department" class="form-label">School Department</label>
+          <input type="text" id="department" class="form-input" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="reason" class="form-label">Reason for Visit</label>
+          <input type="text" id="reason" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="diagnosis" class="form-label">Diagnosis</label>
+          <input type="text" id="diagnosis" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="treatment" class="form-label">Treatment / Action Taken</label>
+          <textarea id="treatment" class="form-input" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn w-full">
+          <i data-feather="save" class="mr-2"></i> Log Visit
+        </button>
+      </form>
+      
+      <div id="visit-success" class="alert alert-success mt-6 hidden">
+        <p>Clinic visit logged successfully!</p>
+        <p class="mt-2">Visit ID: <span id="visit-id" class="font-bold"></span></p>
+        <p class="text-sm mt-2">This ID serves as your digital signature for this visit.</p>
+      </div>
+</div>
+  </main>
+
+  <footer-component></footer-component>
+  <script>feather.replace();</script>
+</body>
+</html>

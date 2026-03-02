@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="sanfelipe.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/footer.js"></script>
+  <script src="script.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <navbar-component></navbar-component>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Generate Reports</h1>
+      
+      <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Filter Options</h2>
+        
+        <form id="report-filter" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="form-group">
+            <label for="report-start-date" class="form-label">Start Date</label>
+            <input type="date" id="report-start-date" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-end-date" class="form-label">End Date</label>
+            <input type="date" id="report-end-date" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-department" class="form-label">Department</label>
+            <select id="report-department" class="form-input">
+              <option value="">All Departments</option>
+              <option value="Kinder">Kinder</option>
+              <option value="Elementary">Elementary</option>
+              <option value="Junior High School">Junior High School</option>
+              <option value="Senior High School">Senior High School</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="report-grade" class="form-label">Grade Level</label>
+            <input type="text" id="report-grade" class="form-input" placeholder="Filter by grade">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-section" class="form-label">Section</label>
+            <input type="text" id="report-section" class="form-input" placeholder="Filter by section">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-reason" class="form-label">Reason for Visit</label>
+            <input type="text" id="report-reason" class="form-input" placeholder="Filter by reason">
+          </div>
+        </form>
+        
+        <button id="apply-filters" class="btn mt-4">
+          <i data-feather="filter" class="mr-2"></i> Apply Filters
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto mb-6">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Grade-Section</th>
+              <th>Department</th>
+              <th>Reason</th>
+              <th>Diagnosis</th>
+              <th>Treatment</th>
+            </tr>
+          </thead>
+          <tbody id="report-results">
+            <!-- Report results will be populated here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="flex justify-end gap-4">
+        <button id="export-excel" class="btn">
+          <i data-feather="download" class="mr-2"></i> Export to Excel
+        </button>
+        <button id="export-csv" class="btn btn-secondary">
+          <i data-feather="download" class="mr-2"></i> Export to CSV
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer-component></footer-component>
+  <script>
+    feather.replace();
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load all visits initially
+      const visits = Database.getVisits();
+      const students = Database.getStudents();
+      displayReportResults(visits, students);
+      
+      // Apply filters
+      document.getElementById('apply-filters').addEventListener('click', function() {
+        const startDate = document.getElementById('report-start-date').value;
+        const endDate = document.getElementById('report-end-date').value;
+        const department = document.getElementById('report-department').value;
+        const grade = document.getElementById('report-grade').value;
+        const section = document.getElementById('report-section').value;
+        const reason = document.getElementById('report-reason').value;
+        
+        let filteredVisits = visits;
+        
+        if (startDate) {
+          filteredVisits = filteredVisits.filter(v => {
+            const visitDate = new Date(v.timestamp).toISOString().split('T')[0];
+            return visitDate >= startDate;
+          });
+        }
+        
+        if (endDate) {
+          filteredVisits = filteredVisits.filter(v => {
+            const visitDate = new Date(v.timestamp).toISOString().split('T')[0];
+            return visitDate <= endDate;
+          });
+        }
+        
+        if (department || grade || section) {
+          filteredVisits = filteredVisits.filter(v => {
+            const student = students.find(s => s.id === v.studentId);
+            if (!student) return false;
+            
+            if (department && student.department !== department) return false;
+            if (grade && student.grade !== grade) return false;
+            if (section && student.section !== section) return false;
+            
+            return true;
+          });
+        }
+        
+        if (reason) {
+          filteredVisits = filteredVisits.filter(v => 
+            v.reason.toLowerCase().includes(reason.toLowerCase())
+          );
+        }
+        
+        displayReportResults(filteredVisits, students);
+      });
+      
+      // Export functions
+      document.getElementById('export-excel').addEventListener('click', function() {
+        exportToExcel();
+      });
+      
+      document.getElementById('export-csv').addEventListener('click', function() {
+        exportToCSV();
+      });
+    });
+    
+    function formatDateTimePH(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString('en-PH', {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    }
+
+    function displayReportResults(visits, students) {
+      const reportResults = document.getElementById('report-results');
+      reportResults.innerHTML = '';
+      
+      if (visits.length === 0) {
+        reportResults.innerHTML = '<tr><td colspan="8" class="text-center py-4">No matching records found</td></tr>';
+        return;
+      }
+      
+      visits.forEach(visit => {
+        const student = students.find(s => s.id === visit.studentId);
+        if (!student) return;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${formatDateTimePH(visit.timestamp)}</td>
+          <td>${visit.studentId}</td>
+          <td>${student.firstName} ${student.lastName}</td>
+          <td>${student.grade}-${student.section}</td>
+          <td>${student.department}</td>
+          <td>${visit.reason}</td>
+          <td>${visit.diagnosis}</td>
+          <td>${visit.treatment}</td>
+        `;
+        reportResults.appendChild(row);
+      });
+    }
+    
+    function exportToExcel() {
+      const visits = Database.getVisits();
+      const students = Database.getStudents();
+      
+      // Prepare data
+      const data = visits.map(visit => {
+        const student = students.find(s => s.id === visit.studentId) || {};
+        return {
+          'Date & Time': formatDateTimePH(visit.timestamp),
+          'Student ID': visit.studentId,
+          'Name': `${student.firstName || ''} ${student.lastName || ''}`.trim(),
+          'Grade-Section': student.grade && student.section ? `${student.grade}-${student.section}` : '',
+          'Department': student.department || '',
+          'Reason': visit.reason,
+          'Diagnosis': visit.diagnosis,
+          'Treatment': visit.treatment
+        };
+      });
+      
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, 'Clinic Visits');
+      
+      // Export
+      XLSX.writeFile(wb, 'clinic_visits.xlsx');
+    }
+    
+    function exportToCSV() {
+      const visits = Database.getVisits();
+      const students = Database.getStudents();
+      
+      // Prepare data
+      const data = visits.map(visit => {
+        const student = students.find(s => s.id === visit.studentId) || {};
+        return [
+          formatDateTimePH(visit.timestamp),
+          visit.studentId,
+          `${student.firstName || ''} ${student.lastName || ''}`.trim(),
+          student.grade && student.section ? `${student.grade}-${student.section}` : '',
+          student.department || '',
+          visit.reason,
+          visit.diagnosis,
+          visit.treatment
+        ];
+      });
+      
+      // Add headers
+      data.unshift([
+        'Date & Time', 'Student ID', 'Name', 'Grade-Section', 'Department', 
+        'Reason', 'Diagnosis', 'Treatment'
+      ]);
+      
+      // Convert to CSV
+      const csvContent = data.map(row => 
+        row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')
+      ).join('\n');
+      
+      // Download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'clinic_visits.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

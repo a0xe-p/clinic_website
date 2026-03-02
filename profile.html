@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="sanfelipe.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/footer.js"></script>
+  <script src="script.js"></script>
+</head>
+<body class="bg-gray-100">
+  <navbar-component></navbar-component>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Student Profile</h1>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-2">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="text-gray-600">Student ID:</p>
+                <p class="font-medium" id="profile-id">-</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Full Name:</p>
+                <p class="font-medium" id="profile-name">-</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Age:</p>
+                <p class="font-medium" id="profile-age">-</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Grade & Section:</p>
+                <p class="font-medium" id="profile-grade-section">-</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Department:</p>
+                <p class="font-medium" id="profile-department">-</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Clinic Visit History</h2>
+            
+            <div class="overflow-x-auto">
+              <table class="table w-full">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reason</th>
+                    <th>Diagnosis</th>
+                    <th>Treatment</th>
+                  </tr>
+                </thead>
+                <tbody id="visit-history">
+                  <!-- Visits will be populated here by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Student QR Code</h2>
+            <canvas id="profile-qr" class="qr-code mx-auto"></canvas>
+            <div class="mt-4">
+              <button onclick="window.print()" class="btn">
+                <i data-feather="printer" class="mr-2"></i> Print QR Code
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer-component></footer-component>
+  <script>
+    feather.replace();
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const studentId = urlParams.get('id');
+      
+      if (studentId) {
+        const student = Database.getStudentById(studentId);
+        if (student) {
+          document.getElementById('profile-id').textContent = student.id;
+          document.getElementById('profile-name').textContent = `${student.firstName} ${student.lastName}`;
+          document.getElementById('profile-age').textContent = student.age;
+          document.getElementById('profile-grade-section').textContent = `${student.grade}-${student.section}`;
+          document.getElementById('profile-department').textContent = student.department;
+          
+          QRGenerator.generate(student.id, 'profile-qr');
+          
+          // Load visit history
+          const visits = Database.getVisitsByStudentId(studentId);
+          const visitHistory = document.getElementById('visit-history');
+          visitHistory.innerHTML = '';
+          
+          if (visits.length === 0) {
+            visitHistory.innerHTML = '<tr><td colspan="4" class="text-center py-4">No clinic visits recorded</td></tr>';
+          } else {
+            visits.forEach(visit => {
+              const row = document.createElement('tr');
+              const date = new Date(visit.timestamp);
+              row.innerHTML = `
+                <td>${date.toLocaleDateString()}</td>
+                <td>${visit.reason}</td>
+                <td>${visit.diagnosis}</td>
+                <td>${visit.treatment}</td>
+              `;
+              visitHistory.appendChild(row);
+            });
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

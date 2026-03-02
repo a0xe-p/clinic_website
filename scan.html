@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan QR Code</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="sanfelipe.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/footer.js"></script>
+</head>
+<body class="bg-gray-100">
+  <navbar-component></navbar-component>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Scan Student QR Code</h1>
+      
+      <div class="mb-4">
+        <p class="text-gray-600">Point the camera at the student's QR code to scan it.</p>
+      </div>
+      
+      <div class="relative">
+        <video id="qr-video" width="100%" playsinline class="border rounded-lg"></video>
+        <canvas id="qr-canvas" class="hidden"></canvas>
+        
+        <div id="scan-result" class="mt-4 hidden">
+          <div class="alert alert-success">
+            <p>QR code scanned successfully!</p>
+            <p class="font-medium mt-2">Student ID: <span id="scanned-id"></span></p>
+          </div>
+          
+          <div class="mt-4">
+            <a id="proceed-link" href="visit.html" class="btn w-full">
+              <i data-feather="arrow-right" class="mr-2"></i> Proceed to Visit Form
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="visit.html" class="btn btn-secondary w-full">
+          <i data-feather="arrow-left" class="mr-2"></i> Back to Manual Entry
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer-component></footer-component>
+  <script>
+    feather.replace();
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const video = document.getElementById('qr-video');
+      const canvas = document.getElementById('qr-canvas');
+      const resultDiv = document.getElementById('scan-result');
+      const scannedId = document.getElementById('scanned-id');
+      const proceedLink = document.getElementById('proceed-link');
+      
+      // Check if camera is available
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+            
+            // Start scanning
+            requestAnimationFrame(tick);
+          })
+          .catch(function(err) {
+            console.error('Error accessing camera:', err);
+            alert('Could not access camera. Please check permissions.');
+          });
+      } else {
+        alert('Camera access not supported in this browser.');
+      }
+      
+      function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          
+          if (code) {
+            // QR code found
+            scannedId.textContent = code.data;
+            proceedLink.href = `visit.html?id=${code.data}`;
+            resultDiv.classList.remove('hidden');
+            
+            // Stop scanning
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            
+            return;
+          }
+        }
+        
+        requestAnimationFrame(tick);
+      }
+    });
+  </script>
+</body>
+</html>
